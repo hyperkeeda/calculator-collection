@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Loan Calculator - Financial Calculators</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header>
+    <h1>Loan Calculator</h1>
+  </header>
+
+  <nav>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="financial.html">Financial Calculators</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <section class="calculator-card">
+      <form id="loanForm">
+        <label for="loanAmount">Loan Amount:</label>
+        <input type="number" id="loanAmount" placeholder="Enter loan amount" required />
+        <label for="loanInterest">Interest Rate (%):</label>
+        <input type="number" id="loanInterest" placeholder="Enter interest rate" step="0.01" required />
+        <label for="loanDuration">Duration (months):</label>
+        <input type="number" id="loanDuration" placeholder="Enter duration" required />
+        <button type="submit">Calculate Loan</button>
+      </form>
+      <div id="loanResult"></div>
+    </section>
+  </main>
+
+  <footer>
+    <nav>
+      <ul>
+        <li><a href="#help">Help</a></li>
+        <li><a href="#feature-request">Feature Request</a></li>
+        <li><a href="#donate">Donate</a></li>
+        <li><a href="#contact">Contact Us</a></li>
+      </ul>
+    </nav>
+    <p>&copy; 2025 Calculator Portal. All Rights Reserved.</p>
+  </footer>
+  <script src="js/script.js"></script>
+</body>
+</html>

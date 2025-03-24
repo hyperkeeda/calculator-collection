@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Date Calculator - Everyday Use</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header>
+    <h1>Date Calculator</h1>
+  </header>
+
+  <nav>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="everyday-use.html">Everyday Use Calculators</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <section class="calculator-card">
+      <form id="dateForm">
+        <label for="startDate">Start Date:</label>
+        <input type="date" id="startDate" required />
+        <label for="endDate">End Date:</label>
+        <input type="date" id="endDate" required />
+        <button type="submit">Calculate Days</button>
+      </form>
+      <div id="dateResult"></div>
+    </section>
+  </main>
+
+  <footer>
+    <nav>
+      <ul>
+        <li><a href="#help">Help</a></li>
+        <li><a href="#feature-request">Feature Request</a></li>
+        <li><a href="#donate">Donate</a></li>
+        <li><a href="#contact">Contact Us</a></li>
+      </ul>
+    </nav>
+    <p>&copy; 2025 Calculator Portal. All Rights Reserved.</p>
+  </footer>
+  <script src="js/script.js"></script>
+</body>
+</html>

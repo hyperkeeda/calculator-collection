@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Time Zone Converter - Everyday Use</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header>
+    <h1>Time Zone Converter</h1>
+  </header>
+
+  <nav>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="everyday-use.html">Everyday Use Calculators</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <section class="calculator-card">
+      <form id="timezoneForm">
+        <label for="timeInput">Time (HH:MM):</label>
+        <input type="text" id="timeInput" placeholder="Enter time" required />
+        <label for="fromZone">From Time Zone:</label>
+        <input type="text" id="fromZone" placeholder="e.g., EST" required />
+        <label for="toZone">To Time Zone:</label>
+        <input type="text" id="toZone" placeholder="e.g., PST" required />
+        <button type="submit">Convert</button>
+      </form>
+      <div id="timezoneResult"></div>
+    </section>
+  </main>
+
+  <footer>
+    <nav>
+      <ul>
+        <li><a href="#help">Help</a></li>
+        <li><a href="#feature-request">Feature Request</a></li>
+        <li><a href="#donate">Donate</a></li>
+        <li><a href="#contact">Contact Us</a></li>
+      </ul>
+    </nav>
+    <p>&copy; 2025 Calculator Portal. All Rights Reserved.</p>
+  </footer>
+  <script src="js/script.js"></script>
+</body>
+</html>
