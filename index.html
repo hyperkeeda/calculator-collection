@@ -1,742 +1,341 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CalcHub - Modern Calculator Suite</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Calculator Demo Site</title>
   <style>
-    :root {
-      --primary: #6366f1;
-      --primary-light: #818cf8;
-      --secondary: #10b981;
-      --dark: #1e293b;
-      --light: #f8fafc;
-      --gray: #64748b;
-      --gray-light: #cbd5e1;
-    }
-    * {
+    body {
+      font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-    body {
-      background-color: #f1f5f9;
-      color: var(--dark);
+      background: #f4f4f4;
     }
     header {
-      background-color: white;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      padding: 1rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      background: #333;
+      color: #fff;
+      padding: 1rem;
+      text-align: center;
     }
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-weight: 700;
-      font-size: 1.5rem;
-      color: var(--primary);
+    nav {
+      background: #444;
+      overflow: auto;
     }
     nav ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
       display: flex;
-      list-style-type: none;
-      gap: 1.5rem;
+      flex-wrap: wrap;
     }
-    nav a {
+    nav ul li {
+      margin: 0;
+      flex: 1;
+    }
+    nav ul li a {
+      display: block;
+      padding: 0.8rem;
+      color: #fff;
+      text-align: center;
       text-decoration: none;
-      color: var(--dark);
-      font-weight: 500;
-      transition: color 0.2s;
+      border-right: 1px solid #555;
     }
-    nav a:hover {
-      color: var(--primary);
+    nav ul li a:hover {
+      background: #555;
     }
-    main {
-      max-width: 1200px;
-      margin: 2rem auto;
-      padding: 0 1rem;
+    section {
+      padding: 1rem;
+      margin: 1rem;
+      background: #fff;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
-    .calculator-tabs {
-      display: flex;
-      gap: 0.5rem;
-      margin-bottom: 1.5rem;
-      overflow-x: auto;
+    h2 {
+      border-bottom: 2px solid #eee;
       padding-bottom: 0.5rem;
     }
-    .tab {
-      padding: 0.75rem 1.25rem;
-      background-color: white;
-      border-radius: 8px;
-      cursor: pointer;
-      white-space: nowrap;
-      font-weight: 500;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-      transition: all 0.2s;
+    .calculator {
+      margin-bottom: 1rem;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      background: #fafafa;
     }
-    .tab.active {
-      background-color: var(--primary);
-      color: white;
+    .calculator label {
+      display: block;
+      margin: 0.3rem 0;
     }
-    .tab:hover:not(.active) {
-      background-color: var(--gray-light);
-    }
-    .calculator-container {
-      background-color: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-      padding: 2rem;
-    }
-    .calculator-header {
-      margin-bottom: 1.5rem;
-    }
-    .calculator-header h2 {
-      font-size: 1.5rem;
-      color: var(--dark);
+    .calculator input {
+      width: 100%;
+      padding: 0.4rem;
       margin-bottom: 0.5rem;
     }
-    .calculator-header p {
-      color: var(--gray);
-    }
-    /* Common Calculator Button Styles */
-    .calculator-screen {
-      background-color: var(--light);
-      padding: 1.5rem;
-      border-radius: 8px;
-      margin-bottom: 1rem;
-      text-align: right;
-      font-size: 1.8rem;
-      font-weight: 500;
-      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
-    }
-    .calculator-buttons {
-      display: grid;
-      gap: 0.75rem;
-    }
-    .calc-button {
-      padding: 1rem;
-      border-radius: 8px;
-      border: none;
-      background-color: var(--light);
-      font-size: 1.2rem;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .calc-button:hover {
-      background-color: var(--gray-light);
-    }
-    .operator {
-      background-color: var(--primary-light);
-      color: white;
-    }
-    .equals {
-      background-color: var(--primary);
-      color: white;
-    }
-    .clear {
-      background-color: var(--secondary);
-      color: white;
-    }
-    .operator:hover, .equals:hover, .clear:hover {
-      opacity: 0.9;
-    }
-    /* Standard Calculator */
-    .standard-calculator-view .calculator-buttons {
-      grid-template-columns: repeat(4, 1fr);
-    }
-    /* Scientific Calculator */
-    .scientific-calculator-view .calculator-buttons {
-      grid-template-columns: repeat(5, 1fr);
-    }
-    /* Unit Converter */
-    .converter-view {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 2rem;
-    }
-    .unit-selection {
-      margin-bottom: 1.5rem;
-    }
-    .unit-input {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-    .unit-input label {
-      font-weight: 500;
-      color: var(--gray);
-    }
-    .unit-input input,
-    .unit-input select {
-      padding: 0.75rem;
-      border-radius: 6px;
-      border: 1px solid var(--gray-light);
-    }
-    /* BMI Calculator */
-    .bmi-calculator-view {
-      max-width: 500px;
-      margin: 0 auto;
-    }
-    .bmi-form {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-    }
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-    .form-group label {
-      font-weight: 500;
-      color: var(--gray);
-    }
-    .form-group input {
-      padding: 0.75rem;
-      border-radius: 6px;
-      border: 1px solid var(--gray-light);
-    }
-    .calculate-btn {
-      padding: 0.75rem 1.5rem;
-      background-color: var(--primary);
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 500;
-      transition: background-color 0.2s;
-      grid-column: span 2;
-    }
-    .calculate-btn:hover {
-      background-color: var(--primary-light);
-    }
-    .bmi-result {
-      margin-top: 1.5rem;
-      padding: 1.5rem;
-      background-color: var(--light);
-      border-radius: 8px;
-      text-align: center;
-    }
-    .bmi-value {
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--primary);
-    }
-    .bmi-category {
-      margin-top: 0.5rem;
-      font-weight: 500;
-    }
-    /* Number Tools */
-    .tool-card {
-      background-color: var(--light);
-      border-radius: 8px;
-      padding: 1.5rem;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-      margin-bottom: 1rem;
-    }
-    .tool-card h3 {
-      margin-bottom: 0.75rem;
-      color: var(--primary);
-    }
-    .number-input {
-      display: flex;
-      gap: 0.5rem;
-      margin-bottom: 1rem;
-    }
-    .number-input input {
-      flex: 1;
-      padding: 0.5rem;
-      border-radius: 4px;
-      border: 1px solid var(--gray-light);
-    }
-    .number-input button {
+    .calculator button {
       padding: 0.5rem 1rem;
-      background-color: var(--primary);
-      color: white;
+      background: #333;
+      color: #fff;
       border: none;
-      border-radius: 4px;
+      border-radius: 3px;
       cursor: pointer;
     }
-    .result-box {
-      background-color: white;
-      border-radius: 6px;
-      padding: 1rem;
-      min-height: 80px;
-      border: 1px solid var(--gray-light);
-    }
-    /* Tip Calculator */
-    .tip-calculator-view {
-      max-width: 400px;
-      margin: 0 auto;
-    }
-    .tip-form {
-      display: grid;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-    }
-    .tip-form label {
-      font-weight: 500;
-      color: var(--gray);
-    }
-    .tip-form input {
-      padding: 0.75rem;
-      border-radius: 6px;
-      border: 1px solid var(--gray-light);
-    }
-    .tip-btn {
-      padding: 0.75rem;
-      background-color: var(--primary);
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 500;
-      transition: background-color 0.2s;
-    }
-    .tip-btn:hover {
-      background-color: var(--primary-light);
-    }
-    .tip-result {
-      background-color: var(--light);
-      padding: 1rem;
-      border-radius: 6px;
-      border: 1px solid var(--gray-light);
-      text-align: center;
-    }
-    /* Tip Converter */
-    .tip-converter-view {
-      max-width: 400px;
-      margin: 0 auto;
-    }
-    .tip-converter-form {
-      display: grid;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-    }
-    .tip-converter-form label {
-      font-weight: 500;
-      color: var(--gray);
-    }
-    .tip-converter-form input {
-      padding: 0.75rem;
-      border-radius: 6px;
-      border: 1px solid var(--gray-light);
-    }
-    .tip-converter-btn {
-      padding: 0.75rem;
-      background-color: var(--primary);
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 500;
-      transition: background-color 0.2s;
-    }
-    .tip-converter-btn:hover {
-      background-color: var(--primary-light);
-    }
-    .tip-converter-result {
-      background-color: var(--light);
-      padding: 1rem;
-      border-radius: 6px;
-      border: 1px solid var(--gray-light);
-      text-align: center;
-    }
-    @media (max-width: 768px) {
-      .converter-view {
-        grid-template-columns: 1fr;
-      }
-      .bmi-form {
-        grid-template-columns: 1fr;
-      }
-      .calculate-btn {
-        grid-column: 1;
-      }
+    .calculator button:hover {
+      background: #555;
     }
   </style>
 </head>
 <body>
   <header>
-    <div class="logo">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/>
-        <line x1="7" y1="8" x2="17" y2="8" stroke="currentColor" stroke-width="2"/>
-        <line x1="7" y1="12" x2="17" y2="12" stroke="currentColor" stroke-width="2"/>
-        <line x1="7" y1="16" x2="12" y2="16" stroke="currentColor" stroke-width="2"/>
-      </svg>
-      CalcHub
-    </div>
-    <nav>
-      <ul>
-        <li><a href="#" class="active">Home</a></li>
-        <li><a href="#">About</a></li>
-        <li><a href="#">Tools</a></li>
-        <li><a href="#">Contact</a></li>
-      </ul>
-    </nav>
+    <h1>Calculator Demo Site</h1>
   </header>
-  <main>
-    <!-- Tabs -->
-    <div class="calculator-tabs">
-      <div class="tab active">Standard</div>
-      <div class="tab">Scientific</div>
-      <div class="tab">BMI Calculator</div>
-      <div class="tab">Prime Numbers</div>
-      <div class="tab">Perfect Squares &amp; Cubes</div>
-      <div class="tab">Perfect Numbers</div>
-      <div class="tab">Unit Converter</div>
-      <div class="tab">Tip Calculator</div>
-      <div class="tab">Tip Converter</div>
+  <nav>
+    <ul>
+      <li><a href="#financial">Financial</a></li>
+      <li><a href="#math-science">Math &amp; Science</a></li>
+      <li><a href="#business-work">Business &amp; Work</a></li>
+      <li><a href="#health-fitness">Health &amp; Fitness</a></li>
+      <li><a href="#everyday-use">Everyday Use</a></li>
+    </ul>
+  </nav>
+  
+  <!-- Financial Calculators Section -->
+  <section id="financial">
+    <h2>Financial Calculators</h2>
+    <div class="calculator">
+      <h3>Mortgage Calculator</h3>
+      <label for="mortgage-principal">Principal:</label>
+      <input type="number" id="mortgage-principal" placeholder="Enter principal amount">
+      <label for="mortgage-rate">Interest Rate (%):</label>
+      <input type="number" id="mortgage-rate" placeholder="Enter interest rate">
+      <label for="mortgage-term">Term (years):</label>
+      <input type="number" id="mortgage-term" placeholder="Enter term in years">
+      <button type="button">Calculate</button>
     </div>
-    <!-- Calculator Container -->
-    <div class="calculator-container">
-      <!-- 1. Standard Calculator -->
-      <div class="tab-view standard-calculator-view">
-        <div class="calculator-header">
-          <h2>Standard Calculator</h2>
-          <p>Perform basic arithmetic operations</p>
-        </div>
-        <div class="standard-calculator">
-          <div class="calculator-screen">0</div>
-          <div class="calculator-buttons">
-            <button class="calc-button clear">C</button>
-            <button class="calc-button">()</button>
-            <button class="calc-button">%</button>
-            <button class="calc-button operator">÷</button>
-            <button class="calc-button">7</button>
-            <button class="calc-button">8</button>
-            <button class="calc-button">9</button>
-            <button class="calc-button operator">×</button>
-            <button class="calc-button">4</button>
-            <button class="calc-button">5</button>
-            <button class="calc-button">6</button>
-            <button class="calc-button operator">-</button>
-            <button class="calc-button">1</button>
-            <button class="calc-button">2</button>
-            <button class="calc-button">3</button>
-            <button class="calc-button operator">+</button>
-            <button class="calc-button">+/-</button>
-            <button class="calc-button">0</button>
-            <button class="calc-button">.</button>
-            <button class="calc-button equals">=</button>
-          </div>
-        </div>
-      </div>
-      <!-- 2. Scientific Calculator -->
-      <div class="tab-view scientific-calculator-view" style="display: none;">
-        <div class="calculator-header">
-          <h2>Scientific Calculator</h2>
-          <p>Advanced mathematical functions</p>
-        </div>
-        <div class="scientific-calculator">
-          <div class="calculator-screen">0</div>
-          <div class="calculator-buttons">
-            <button class="calc-button">sin</button>
-            <button class="calc-button">cos</button>
-            <button class="calc-button">tan</button>
-            <button class="calc-button">rad</button>
-            <button class="calc-button">deg</button>
-            <button class="calc-button">ln</button>
-            <button class="calc-button">log</button>
-            <button class="calc-button">√</button>
-            <button class="calc-button">^</button>
-            <button class="calc-button">!</button>
-            <button class="calc-button">(</button>
-            <button class="calc-button">)</button>
-            <button class="calc-button">e</button>
-            <button class="calc-button">π</button>
-            <button class="calc-button">%</button>
-            <button class="calc-button clear">C</button>
-            <button class="calc-button">7</button>
-            <button class="calc-button">8</button>
-            <button class="calc-button">9</button>
-            <button class="calc-button operator">÷</button>
-            <button class="calc-button">DEL</button>
-            <button class="calc-button">4</button>
-            <button class="calc-button">5</button>
-            <button class="calc-button">6</button>
-            <button class="calc-button operator">×</button>
-            <button class="calc-button">Ans</button>
-            <button class="calc-button">1</button>
-            <button class="calc-button">2</button>
-            <button class="calc-button">3</button>
-            <button class="calc-button operator">-</button>
-            <button class="calc-button">EXP</button>
-            <button class="calc-button">0</button>
-            <button class="calc-button">.</button>
-            <button class="calc-button equals">=</button>
-            <button class="calc-button operator">+</button>
-          </div>
-        </div>
-      </div>
-      <!-- 3. BMI Calculator -->
-      <div class="tab-view bmi-calculator-view" style="display: none;">
-        <div class="calculator-header">
-          <h2>BMI Calculator</h2>
-          <p>Calculate your Body Mass Index</p>
-        </div>
-        <div class="bmi-form">
-          <div class="form-group">
-            <label for="weight">Weight (kg)</label>
-            <input type="number" id="weight" placeholder="Enter weight" />
-          </div>
-          <div class="form-group">
-            <label for="height">Height (cm)</label>
-            <input type="number" id="height" placeholder="Enter height" />
-          </div>
-          <div class="form-group">
-            <label for="age">Age (years)</label>
-            <input type="number" id="age" placeholder="Enter age" />
-          </div>
-          <div class="form-group">
-            <label for="gender">Gender</label>
-            <select id="gender">
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
-            </select>
-          </div>
-          <button class="calculate-btn">Calculate BMI</button>
-        </div>
-        <div class="bmi-result">
-          <div class="bmi-value">23.5</div>
-          <div class="bmi-category">Normal weight</div>
-          <p>Your BMI indicates that you are in the normal weight range.</p>
-        </div>
-      </div>
-      <!-- 4. Prime Numbers -->
-      <div class="tab-view prime-number-tools-view" style="display: none;">
-        <div class="calculator-header">
-          <h2>Prime Numbers</h2>
-          <p>Check if a number is prime and find primes in a range</p>
-        </div>
-        <div class="tool-card">
-          <h3>Prime Number Checker</h3>
-          <div class="number-input">
-            <input type="number" placeholder="Enter a number" />
-            <button>Check</button>
-          </div>
-          <div class="result-box">
-            <p>29 is a prime number.</p>
-          </div>
-        </div>
-        <div class="tool-card">
-          <h3>Prime Numbers in Range</h3>
-          <div class="number-input">
-            <input type="number" placeholder="Start" />
-            <input type="number" placeholder="End" />
-            <button>Find</button>
-          </div>
-          <div class="result-box">
-            <p>Primes between 10 and 30:</p>
-            <p>11, 13, 17, 19, 23, 29</p>
-          </div>
-        </div>
-      </div>
-      <!-- 5. Perfect Squares & Cubes -->
-      <div class="tab-view perfect-squares-cubes-view" style="display: none;">
-        <div class="calculator-header">
-          <h2>Perfect Squares &amp; Cubes</h2>
-          <p>Check for perfect squares and cubes and list them in a range</p>
-        </div>
-        <div class="tool-card">
-          <h3>Perfect Square Checker</h3>
-          <div class="number-input">
-            <input type="number" placeholder="Enter a number" />
-            <button>Check</button>
-          </div>
-          <div class="result-box">
-            <p>25 is a perfect square (5²).</p>
-          </div>
-        </div>
-        <div class="tool-card">
-          <h3>Perfect Cube Checker</h3>
-          <div class="number-input">
-            <input type="number" placeholder="Enter a number" />
-            <button>Check</button>
-          </div>
-          <div class="result-box">
-            <p>27 is a perfect cube (3³).</p>
-          </div>
-        </div>
-        <div class="tool-card">
-          <h3>Perfect Squares in Range</h3>
-          <div class="number-input">
-            <input type="number" placeholder="Start" />
-            <input type="number" placeholder="End" />
-            <button>Find</button>
-          </div>
-          <div class="result-box">
-            <p>Squares between 1 and 50:</p>
-            <p>1, 4, 9, 16, 25, 36, 49</p>
-          </div>
-        </div>
-        <div class="tool-card">
-          <h3>Perfect Cubes in Range</h3>
-          <div class="number-input">
-            <input type="number" placeholder="Start" />
-            <input type="number" placeholder="End" />
-            <button>Find</button>
-          </div>
-          <div class="result-box">
-            <p>Cubes between 1 and 100:</p>
-            <p>1, 8, 27, 64</p>
-          </div>
-        </div>
-      </div>
-      <!-- 6. Perfect Numbers -->
-      <div class="tab-view perfect-number-tools-view" style="display: none;">
-        <div class="calculator-header">
-          <h2>Perfect Numbers</h2>
-          <p>Check for perfect numbers and list them in a range</p>
-        </div>
-        <div class="tool-card">
-          <h3>Perfect Number Checker</h3>
-          <div class="number-input">
-            <input type="number" placeholder="Enter a number" />
-            <button>Check</button>
-          </div>
-          <div class="result-box">
-            <p>28 is a perfect number (1+2+4+7+14=28).</p>
-          </div>
-        </div>
-        <div class="tool-card">
-          <h3>Perfect Numbers in Range</h3>
-          <div class="number-input">
-            <input type="number" placeholder="Start" />
-            <input type="number" placeholder="End" />
-            <button>Find</button>
-          </div>
-          <div class="result-box">
-            <p>Perfect numbers between 1 and 10000:</p>
-            <p>6, 28, 496, 8128</p>
-          </div>
-        </div>
-      </div>
-      <!-- 7. Unit Converter -->
-      <div class="tab-view converter-view" style="display: none;">
-        <div class="calculator-header">
-          <h2>Unit Converter</h2>
-          <p>Convert between different units</p>
-        </div>
-        <div class="converter">
-          <div>
-            <div class="unit-selection">
-              <h3>Conversion Type</h3>
-              <select>
-                <option>Length</option>
-                <option>Area</option>
-                <option>Volume</option>
-                <option>Weight/Mass</option>
-                <option>Temperature</option>
-                <option>Time</option>
-                <option>Speed</option>
-                <option>Digital Storage</option>
-              </select>
-            </div>
-            <div class="unit-input">
-              <label>From</label>
-              <input type="number" value="1" />
-              <select>
-                <option>Kilometer (km)</option>
-                <option>Meter (m)</option>
-                <option>Centimeter (cm)</option>
-                <option>Millimeter (mm)</option>
-                <option>Mile (mi)</option>
-                <option>Yard (yd)</option>
-                <option>Foot (ft)</option>
-                <option>Inch (in)</option>
-              </select>
-            </div>
-          </div>
-          <div>
-            <div class="unit-selection">
-              <h3>Conversion Result</h3>
-            </div>
-            <div class="unit-input">
-              <label>To</label>
-              <input type="number" value="1000" readonly />
-              <select>
-                <option>Meter (m)</option>
-                <option>Kilometer (km)</option>
-                <option>Centimeter (cm)</option>
-                <option>Millimeter (mm)</option>
-                <option>Mile (mi)</option>
-                <option>Yard (yd)</option>
-                <option>Foot (ft)</option>
-                <option>Inch (in)</option>
-              </select>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- 8. Tip Calculator -->
-      <div class="tab-view tip-calculator-view" style="display: none;">
-        <div class="calculator-header">
-          <h2>Tip Calculator</h2>
-          <p>Calculate the tip amount and split the bill</p>
-        </div>
-        <div class="tip-form">
-          <div>
-            <label for="bill-amount">Bill Amount</label>
-            <input type="number" id="bill-amount" placeholder="Enter total bill" />
-          </div>
-          <div>
-            <label for="tip-percentage">Tip Percentage (%)</label>
-            <input type="number" id="tip-percentage" placeholder="e.g., 15" />
-          </div>
-          <div>
-            <label for="num-people">Number of People</label>
-            <input type="number" id="num-people" placeholder="Enter number of people" />
-          </div>
-        </div>
-        <button class="tip-btn">Calculate Tip</button>
-        <div class="tip-result">
-          <p>Tip per person: $0.00</p>
-          <p>Total Tip: $0.00</p>
-        </div>
-      </div>
-      <!-- 9. Tip Converter -->
-      <div class="tab-view tip-converter-view" style="display: none;">
-        <div class="calculator-header">
-          <h2>Tip Converter</h2>
-          <p>Convert a tip amount to an effective tip percentage</p>
-        </div>
-        <div class="tip-converter-form">
-          <div>
-            <label for="tc-bill-amount">Bill Amount</label>
-            <input type="number" id="tc-bill-amount" placeholder="Enter bill amount" />
-          </div>
-          <div>
-            <label for="tc-tip-amount">Tip Amount</label>
-            <input type="number" id="tc-tip-amount" placeholder="Enter tip amount" />
-          </div>
-        </div>
-        <button class="tip-converter-btn">Convert Tip</button>
-        <div class="tip-converter-result">
-          <p>Effective Tip Percentage: 0%</p>
-        </div>
-      </div>
+    <div class="calculator">
+      <h3>Loan Calculator</h3>
+      <label for="loan-amount">Loan Amount:</label>
+      <input type="number" id="loan-amount" placeholder="Enter loan amount">
+      <label for="loan-interest">Interest Rate (%):</label>
+      <input type="number" id="loan-interest" placeholder="Enter interest rate">
+      <label for="loan-duration">Duration (months):</label>
+      <input type="number" id="loan-duration" placeholder="Enter duration">
+      <button type="button">Calculate</button>
     </div>
-  </main>
-  <script>
-    // Toggle the views based on the tab clicked.
-    const tabs = document.querySelectorAll('.tab');
-    const views = document.querySelectorAll('.tab-view');
-    
-    tabs.forEach((tab, index) => {
-      tab.addEventListener('click', () => {
-        // Remove active class from all tabs and hide all views.
-        tabs.forEach(t => t.classList.remove('active'));
-        views.forEach(view => view.style.display = 'none');
-        // Activate the selected tab and show its view.
-        tab.classList.add('active');
-        views[index].style.display = 'block';
-      });
-    });
-  </script>
+    <div class="calculator">
+      <h3>Investment Calculator</h3>
+      <label for="investment-amount">Initial Investment:</label>
+      <input type="number" id="investment-amount" placeholder="Enter investment amount">
+      <label for="investment-rate">Annual Interest Rate (%):</label>
+      <input type="number" id="investment-rate" placeholder="Enter interest rate">
+      <label for="investment-years">Years:</label>
+      <input type="number" id="investment-years" placeholder="Enter number of years">
+      <button type="button">Calculate</button>
+    </div>
+    <div class="calculator">
+      <h3>Currency Converter</h3>
+      <label for="currency-amount">Amount:</label>
+      <input type="number" id="currency-amount" placeholder="Enter amount">
+      <label for="currency-from">From:</label>
+      <input type="text" id="currency-from" placeholder="Currency code">
+      <label for="currency-to">To:</label>
+      <input type="text" id="currency-to" placeholder="Currency code">
+      <button type="button">Convert</button>
+    </div>
+    <div class="calculator">
+      <h3>Tax Calculator</h3>
+      <label for="tax-income">Income:</label>
+      <input type="number" id="tax-income" placeholder="Enter income">
+      <label for="tax-rate">Tax Rate (%):</label>
+      <input type="number" id="tax-rate" placeholder="Enter tax rate">
+      <button type="button">Calculate Tax</button>
+    </div>
+    <div class="calculator">
+      <h3>Savings &amp; Retirement Calculator</h3>
+      <label for="savings-current">Current Savings:</label>
+      <input type="number" id="savings-current" placeholder="Enter current savings">
+      <label for="savings-monthly">Monthly Contribution:</label>
+      <input type="number" id="savings-monthly" placeholder="Enter monthly contribution">
+      <label for="savings-years">Years until retirement:</label>
+      <input type="number" id="savings-years" placeholder="Enter number of years">
+      <button type="button">Estimate</button>
+    </div>
+  </section>
+  
+  <!-- Math & Science Calculators Section -->
+  <section id="math-science">
+    <h2>Math &amp; Science Calculators</h2>
+    <div class="calculator">
+      <h3>Basic &amp; Scientific Calculator</h3>
+      <input type="text" placeholder="Enter calculation">
+      <button type="button">Calculate</button>
+    </div>
+    <div class="calculator">
+      <h3>Percentage Calculator</h3>
+      <label for="percentage-number">Number:</label>
+      <input type="number" id="percentage-number" placeholder="Enter number">
+      <label for="percentage-value">Percentage (%):</label>
+      <input type="number" id="percentage-value" placeholder="Enter percentage">
+      <button type="button">Calculate</button>
+    </div>
+    <div class="calculator">
+      <h3>Unit Converter</h3>
+      <label for="unit-value">Value:</label>
+      <input type="number" id="unit-value" placeholder="Enter value">
+      <label for="unit-from">From Unit:</label>
+      <input type="text" id="unit-from" placeholder="e.g., meters">
+      <label for="unit-to">To Unit:</label>
+      <input type="text" id="unit-to" placeholder="e.g., feet">
+      <button type="button">Convert</button>
+    </div>
+    <div class="calculator">
+      <h3>BMI Calculator</h3>
+      <label for="bmi-weight">Weight (kg):</label>
+      <input type="number" id="bmi-weight" placeholder="Enter weight">
+      <label for="bmi-height">Height (m):</label>
+      <input type="number" id="bmi-height" placeholder="Enter height">
+      <button type="button">Calculate BMI</button>
+    </div>
+    <div class="calculator">
+      <h3>Physics Calculator</h3>
+      <label for="physics-var">Variable Input:</label>
+      <input type="number" id="physics-var" placeholder="Enter value">
+      <button type="button">Calculate</button>
+    </div>
+    <div class="calculator">
+      <h3>Statistics Calculator</h3>
+      <label for="stats-data">Data (comma separated):</label>
+      <input type="text" id="stats-data" placeholder="e.g., 1,2,3,4">
+      <button type="button">Analyze</button>
+    </div>
+  </section>
+  
+  <!-- Business & Work Calculators Section -->
+  <section id="business-work">
+    <h2>Business &amp; Work Calculators</h2>
+    <div class="calculator">
+      <h3>Profit Margin Calculator</h3>
+      <label for="profit-revenue">Revenue:</label>
+      <input type="number" id="profit-revenue" placeholder="Enter revenue">
+      <label for="profit-cost">Cost:</label>
+      <input type="number" id="profit-cost" placeholder="Enter cost">
+      <button type="button">Calculate</button>
+    </div>
+    <div class="calculator">
+      <h3>Markup Calculator</h3>
+      <label for="markup-cost">Cost:</label>
+      <input type="number" id="markup-cost" placeholder="Enter cost">
+      <label for="markup-percentage">Markup (%):</label>
+      <input type="number" id="markup-percentage" placeholder="Enter markup percentage">
+      <button type="button">Calculate Price</button>
+    </div>
+    <div class="calculator">
+      <h3>Paycheck Calculator</h3>
+      <label for="paycheck-gross">Gross Pay:</label>
+      <input type="number" id="paycheck-gross" placeholder="Enter gross pay">
+      <label for="paycheck-deductions">Deductions:</label>
+      <input type="number" id="paycheck-deductions" placeholder="Enter deductions">
+      <button type="button">Estimate Net Pay</button>
+    </div>
+    <div class="calculator">
+      <h3>ROI Calculator</h3>
+      <label for="roi-gain">Gain from Investment:</label>
+      <input type="number" id="roi-gain" placeholder="Enter gain">
+      <label for="roi-cost">Cost of Investment:</label>
+      <input type="number" id="roi-cost" placeholder="Enter cost">
+      <button type="button">Calculate ROI</button>
+    </div>
+    <div class="calculator">
+      <h3>Freelance Rate Calculator</h3>
+      <label for="freelance-expenses">Monthly Expenses:</label>
+      <input type="number" id="freelance-expenses" placeholder="Enter expenses">
+      <label for="freelance-income">Desired Income:</label>
+      <input type="number" id="freelance-income" placeholder="Enter income">
+      <button type="button">Calculate Rate</button>
+    </div>
+  </section>
+  
+  <!-- Health & Fitness Calculators Section -->
+  <section id="health-fitness">
+    <h2>Health &amp; Fitness Calculators</h2>
+    <div class="calculator">
+      <h3>Calorie Calculator</h3>
+      <label for="calorie-age">Age:</label>
+      <input type="number" id="calorie-age" placeholder="Enter age">
+      <label for="calorie-weight">Weight (kg):</label>
+      <input type="number" id="calorie-weight" placeholder="Enter weight">
+      <label for="calorie-height">Height (cm):</label>
+      <input type="number" id="calorie-height" placeholder="Enter height">
+      <button type="button">Calculate</button>
+    </div>
+    <div class="calculator">
+      <h3>Macro Nutrient Calculator</h3>
+      <label for="macro-calories">Daily Calories:</label>
+      <input type="number" id="macro-calories" placeholder="Enter calories">
+      <button type="button">Estimate Macros</button>
+    </div>
+    <div class="calculator">
+      <h3>Pregnancy Due Date Calculator</h3>
+      <label for="pregnancy-date">Last Menstrual Period:</label>
+      <input type="date" id="pregnancy-date">
+      <button type="button">Calculate Due Date</button>
+    </div>
+    <div class="calculator">
+      <h3>Ideal Weight Calculator</h3>
+      <label for="ideal-height">Height (cm):</label>
+      <input type="number" id="ideal-height" placeholder="Enter height">
+      <button type="button">Calculate Ideal Weight</button>
+    </div>
+    <div class="calculator">
+      <h3>Hydration Calculator</h3>
+      <label for="hydration-weight">Weight (kg):</label>
+      <input type="number" id="hydration-weight" placeholder="Enter weight">
+      <button type="button">Calculate Water Intake</button>
+    </div>
+  </section>
+  
+  <!-- Everyday Use Calculators Section -->
+  <section id="everyday-use">
+    <h2>Everyday Use Calculators</h2>
+    <div class="calculator">
+      <h3>Tip Calculator</h3>
+      <label for="tip-amount">Bill Amount:</label>
+      <input type="number" id="tip-amount" placeholder="Enter bill amount">
+      <label for="tip-percentage">Tip Percentage:</label>
+      <input type="number" id="tip-percentage" placeholder="Enter tip %">
+      <button type="button">Calculate Tip</button>
+    </div>
+    <div class="calculator">
+      <h3>Date Calculator</h3>
+      <label for="date-start">Start Date:</label>
+      <input type="date" id="date-start">
+      <label for="date-end">End Date:</label>
+      <input type="date" id="date-end">
+      <button type="button">Calculate Days</button>
+    </div>
+    <div class="calculator">
+      <h3>Time Zone Converter</h3>
+      <label for="timezone-input">Time (HH:MM):</label>
+      <input type="text" id="timezone-input" placeholder="Enter time">
+      <label for="timezone-from">From:</label>
+      <input type="text" id="timezone-from" placeholder="e.g., EST">
+      <label for="timezone-to">To:</label>
+      <input type="text" id="timezone-to" placeholder="e.g., PST">
+      <button type="button">Convert</button>
+    </div>
+    <div class="calculator">
+      <h3>Fuel Cost Calculator</h3>
+      <label for="fuel-distance">Distance (km):</label>
+      <input type="number" id="fuel-distance" placeholder="Enter distance">
+      <label for="fuel-price">Fuel Price:</label>
+      <input type="number" id="fuel-price" placeholder="Enter price per liter">
+      <button type="button">Estimate Cost</button>
+    </div>
+    <div class="calculator">
+      <h3>GPA Calculator</h3>
+      <label for="gpa-grades">Grades (comma separated):</label>
+      <input type="text" id="gpa-grades" placeholder="e.g., 4.0,3.7,3.3">
+      <button type="button">Calculate GPA</button>
+    </div>
+  </section>
+  
 </body>
 </html>
